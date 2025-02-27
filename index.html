@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title>Potree Viewer</title>
+
+	<link rel="stylesheet" type="text/css" href="./libs/potree/potree.css">
+	<link rel="stylesheet" type="text/css" href="./libs/jquery-ui/jquery-ui.min.css">
+	<link rel="stylesheet" type="text/css" href="./libs/openlayers3/ol.css">
+	<link rel="stylesheet" type="text/css" href="./libs/spectrum/spectrum.css">
+	<link rel="stylesheet" type="text/css" href="./libs/jstree/themes/mixed/style.css">
+	<link rel="stylesheet" type="text/css" href="./src/desktop.css">
+
+	<style>
+		  #toggleButtons {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			z-index: 1000;
+			display: flex;
+			flex-direction: column;
+			align-items: stretch;
+			width: 200px;
+			padding: 10px;
+			background: #19282C; /* bounding box background */
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+		}
+		
+		#toggleButtons button {
+			margin: 5px 0;
+			padding: 10px;
+			background-color: #C6C9CA; /* unselected button color */
+			border: none;
+			cursor: pointer;
+			outline: none;
+			transition: background-color 0.2s ease;
+			width: 100%;
+			box-sizing: border-box;
+		}
+		
+		#toggleButtons button.active {
+			background-color: #817f7f; /* selected button color */
+		}
+		
+		#toggleButtons .toggleTitle {
+			margin: 0 0 10px;
+			text-align: center;
+			font-size: 16px;
+			color: #f8f8f8;
+		}
+	</style>
+</head>
+<body>
+	<div id="toggleButtons">
+		<h3 class="toggleTitle">Point Cloud Layers</h3>
+		<button id="toggle-2017-class2">2017 - Class 2</button>
+		<button id="toggle-2017-other">2017 - All Other Classes</button>
+		<button id="toggle-2020-class2">2020 - Class 2</button>
+		<button id="toggle-2020-other">2020 - All Other Classes</button>
+	
+		</script>
+	  </div>
+
+	<span id="pointcloud_file_dropzone" class="droproot">
+		<span style="position:absolute; left: 0px; right: 0px; top: 0px; bottom: 0px" class="dropzone">
+			
+			<span class="middle">
+				<p class="dropzone_title">Convert and/or Load point clouds</p>
+
+				<ul class="dropzone_text">
+					<li>Drop LAS/LAZ files to convert and load them.</li>
+					<li>Drop folders to convert and load all files inside.</li>
+					<li>Drop previously converted cloud.js, metadata.json or containing directy to load.</li>
+				</ul>
+			</span>
+
+		</span>
+	</span>
+
+	<span id="converter_panel" class="middle">
+
+		<div class="converter_panel_widget">
+			Target Directory: <br>
+			<span style="display: flex">
+				<input id="converter_panel_target_directory" type="textfield" style="flex-grow: 1">
+				<!-- <span style="width: 0.2em"></span>
+				<input id="converter_panel_pick_target_directory" type="button" value="..."> -->
+			</span>
+			<div id="converter_panel_target_directory_warning" style="color: red">
+				&nbsp;
+			</div>
+		</div>
+
+		<div class="converter_panel_widget">
+			Input Files:
+			<div id="converter_panel_files" class="converter_panel_list">
+				<div>file 1</div>
+				<div>file 2</div>
+				<div>file 3</div>
+				<div>file 4</div>
+				<div>file 5</div>
+				<div>file 6</div>
+				<div>file 7</div>
+				<div>file 8</div>
+			</div>
+		</div>
+
+		<br>
+
+		<div class="converter_panel_widget">
+			Choose a Converter:
+			<div class="selection_buttons">
+
+				<input type="radio" id="selection_converter_version_1_7" 
+					name="selection_converter_version" value="all">
+					<label for="selection_converter_version_1_7" class="left">
+					<span class="title">PotreeConverter 1.7</span>
+					<ul>
+						<li>Older version that generates 1 file per octree node.</li>
+						<li>Try of PotreeConverter 2.0 causes issues.</li>
+					</ul>
+				</label>
+
+				<input type="radio" id="selection_converter_version_2_0" 
+					name="selection_converter_version" value="false" checked>
+					<label for="selection_converter_version_2_0" class="right" >
+					<span class="title">PotreeConverter 2.0</span>
+					<ul>
+						<li>Complete rewrite that generates a total of 3 files instead of thousands to millions.</li>
+					</ul>
+				</label>
+
+			</div>
+		</div>
+
+		<p>
+			<span style="display: flex">
+				<span style="flex-grow: 1"></span>
+				<input type="button" value="Start Conversion" id="converter_panel_start"/>
+				<span style="width:1em"></span>
+				<input type="button" value="Cancel" id="converter_panel_cancel"/>
+			</span>
+			
+		</p>
+
+	</span>
+
+	<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+
+	<script src="./libs/jquery/jquery-3.1.1.min.js"></script>
+	<script src="./libs/spectrum/spectrum.js"></script>
+	<script src="./libs/jquery-ui/jquery-ui.min.js"></script>
+	<script src="./libs/other/BinaryHeap.js"></script>
+	<script src="./libs/tween/tween.min.js"></script>
+	<script src="./libs/d3/d3.js"></script>
+	<script src="./libs/proj4/proj4.js"></script>
+	<script src="./libs/openlayers3/ol.js"></script>
+	<script src="./libs/i18next/i18next.js"></script>
+	<script src="./libs/jstree/jstree.js"></script>
+	<script src="./libs/potree/potree.js"></script>
+	<script src="./libs/plasio/js/laslaz.js"></script>
+
+		<script>
+		let elSplatQuality = $("#converter_choice");
+		elSplatQuality.selectgroup({title: "Converter Choice"});
+
+		elSplatQuality.find("input").click( (e) => {
+			console.log(e.target.value);
+			 if(e.target.value === "standard"){
+				this.viewer.useHQ = false;
+			}else if(e.target.value === "hq"){
+				this.viewer.useHQ = true;
+			}
+		});
+	</script>
+	
+	<div class="potree_container" style="position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; ">
+		<div id="potree_render_area"></div>
+		<div id="potree_sidebar_container"> </div>
+	</div>
+		<script type="module">
+
+		import {
+			loadDroppedPointcloud, 
+			createPlaceholder, 
+			convert_17, 
+			convert_20, 
+			doConversion,
+			dragEnter, dragOver, dragLeave, dropHandler,
+		} from "./src/desktop.js";
+
+		{
+			// open links in the standard browser instead of electron
+
+			// const { shell } = require('electron');
+				// shell.openExternal('https://github.com');
+				// event.preventDefault();
+				// shell.openExternal(this.href);
+			}
+		
+		let elBody = document.body;
+
+		elBody.addEventListener("dragenter", dragEnter, false);
+		elBody.addEventListener("dragover", dragOver, false);
+		elBody.addEventListener("dragleave", dragLeave, false);
+		elBody.addEventListener("drop", dropHandler, false);
+	
+		let elRenderArea = document.getElementById("potree_render_area");
+		let viewerArgs = {
+			noDragAndDrop: true,
+		};
+		window.viewer = new Potree.Viewer(elRenderArea, viewerArgs);
+		viewer.setEDLEnabled(true);
+		viewer.setFOV(45);
+		viewer.setPointBudget(10*1000*1000);
+		viewer.setMinNodeSize(0);
+		viewer.loadSettingsFromURL();
+		
+		viewer.setDescription("Bobcat Fire (2017-2020)");
+		
+		viewer.loadGUI(() => {
+			viewer.setLanguage('en');
+			$("#menu_filters").next();
+			$("#menu_appearance").next().show();
+			$("#menu_tools").next().show();
+			$("#menu_scene").next();
+			viewer.toggleSidebar();
+		});
+
+		// Global variables to store the point clouds.
+		
+		let pc2017Class2, pc2017Other, pc2020Class2, pc2020Other;
+
+		// Load point cloud for 2017 - Class 2
+		Potree.loadPointCloud("./Bobcat_Fires_Converted/SBNFprefire2017_253_1881_class2_converted/metadata.json", "2017 - Class 2", function(e){
+			pc2017Class2 = e.pointcloud;
+			viewer.scene.addPointCloud(pc2017Class2);
+			pc2017Class2.position.z = 0;
+			pc2017Class2.visible = false;  // Turn off by default
+			let material = pc2017Class2.material;
+			material.size = 2;
+			material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
+			material.shape = Potree.PointShape.CIRCLE;
+			material.activeAttributeName = "rgba";
+			viewer.fitToScreen();
+		});
+
+		// Load point cloud for 2017 - All Other Classes
+		Potree.loadPointCloud("./Bobcat_Fires_Converted/SBNFprefire2017_253_1881_other_class_converted/metadata.json", "2017 - All Other Classes", function(e){
+			pc2017Other = e.pointcloud;
+			viewer.scene.addPointCloud(pc2017Other);
+			pc2017Other.position.z = 0;
+			pc2017Other.visible = false;  // Turn off by default
+			let material = pc2017Other.material;
+			material.size = 2;
+			material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
+			material.shape = Potree.PointShape.CIRCLE;
+			material.activeAttributeName = "rgba";
+			viewer.fitToScreen();
+		});
+			
+		// Load point cloud for 2020 - Class 2
+		Potree.loadPointCloud("./Bobcat_Fires_Converted/sbnf2020_253_1881_class2_converted/metadata.json", "2020 - Class 2", function(e){
+			pc2020Class2 = e.pointcloud;
+			viewer.scene.addPointCloud(pc2020Class2);
+			pc2020Class2.position.z = 0;
+			pc2020Class2.visible = false;  // Turn off by default
+			let material = pc2020Class2.material;
+			material.size = 2;
+			material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
+			material.shape = Potree.PointShape.CIRCLE;
+			material.activeAttributeName = "rgba";
+			viewer.fitToScreen();
+		});
+
+		// Load point cloud for 2020 - All Other Classes
+		Potree.loadPointCloud("./Bobcat_Fires_Converted/sbnf2020_253_1881_other_class_converted/metadata.json", "2020 - All Other Classes", function(e){
+			pc2020Other = e.pointcloud;
+			viewer.scene.addPointCloud(pc2020Other);
+			pc2020Other.position.z = 0;
+			pc2020Other.visible = false;  // Turn off by default
+			let material = pc2020Other.material;
+			material.size = 2;
+			material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
+			material.shape = Potree.PointShape.CIRCLE;
+			material.activeAttributeName = "rgba";
+			viewer.fitToScreen();
+		});
+		
+		// Function to toggle visibility of a point cloud
+		function togglePointCloud(pc, button) {
+		if (pc) {
+			pc.visible = !pc.visible;
+			// Set the button's class based on visibility
+			if(pc.visible) {
+				button.classList.add("active");
+			} else {
+				button.classList.remove("active");
+			}
+			viewer.render();
+		}
+	}
+		// Attach event listeners to the toggle buttons
+		document.getElementById("toggle-2017-class2").addEventListener("click", function(){
+			togglePointCloud(pc2017Class2, this);
+		});
+		document.getElementById("toggle-2017-other").addEventListener("click", function(){
+			togglePointCloud(pc2017Other, this);
+		});
+		document.getElementById("toggle-2020-class2").addEventListener("click", function(){
+			togglePointCloud(pc2020Class2, this);
+		});
+		document.getElementById("toggle-2020-other").addEventListener("click", function(){
+			togglePointCloud(pc2020Other, this);
+		});
+
+		 viewer.onGUILoaded(() => {
+		 	let message = `
+		 	Use the buttons on the top right to toggle each point cloud layer on or off.<br>
+			<p>
+			Click a button to turn its corresponding layer on (the button will darken) or off (the button will lighten).
+    </a>
+</p>
+		 	`;
+		 	viewer.postMessage(message, {duration: 25000});
+		 });
+
+		window.addEventListener('error', (e) => {
+			viewer.postError(e.error.message);
+		});
+	</script>
+	</body>
+</html> 
