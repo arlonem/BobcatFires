@@ -237,7 +237,7 @@
 		let pc2017Class2, pc2017Other, pc2020Class2, pc2020Other;
 
 		// Load point cloud for 2017 - Class 2
-		Potree.loadPointCloud("Bobcat_Fires_Converted/SBNFprefire2017_253_1881_class2_converted/metadata.json", "2017 - Class 2", function(e){
+		Potree.loadPointCloud("https://potree-data-arlo.s3.us-east-2.amazonaws.com/SBNFprefire2017_253_1881_class2_converted/metadata.json", "2017 - Class 2", function(e){
 			pc2017Class2 = e.pointcloud;
 			viewer.scene.addPointCloud(pc2017Class2);
 			pc2017Class2.position.z = 0;
@@ -251,7 +251,7 @@
 		});
 
 		// Load point cloud for 2017 - All Other Classes
-		Potree.loadPointCloud("Bobcat_Fires_Converted/SBNFprefire2017_253_1881_other_class_converted/metadata.json", "2017 - All Other Classes", function(e){
+		Potree.loadPointCloud("https://potree-data-arlo.s3.us-east-2.amazonaws.com/SBNFprefire2017_253_1881_other_class_converted/metadata.json", function(e){
 			pc2017Other = e.pointcloud;
 			viewer.scene.addPointCloud(pc2017Other);
 			pc2017Other.position.z = 0;
@@ -279,7 +279,7 @@
 		});
 
 		// Load point cloud for 2020 - All Other Classes
-		Potree.loadPointCloud("https://potree-data-arlo.s3.us-east-2.amazonaws.com/sbnf2020_253_1881_class2_converted/metadata.json", "2020 - All Other Classes", function(e){
+		Potree.loadPointCloud("https://potree-data-arlo.s3.us-east-2.amazonaws.com/sbnf2020_253_1881_other_class_converted/metadata.json", "2020 - All Other Classes", function(e){
 			pc2020Other = e.pointcloud;
 			viewer.scene.addPointCloud(pc2020Other);
 			pc2020Other.position.z = 0;
