@@ -1,0 +1,2 @@
+Bobcat_Fires_Converted/** filter=lfs diff=lfs merge=lfs -text
+Classes/** filter=lfs diff=lfs merge=lfs -text
