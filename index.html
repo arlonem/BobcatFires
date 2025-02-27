@@ -237,7 +237,7 @@
 		let pc2017Class2, pc2017Other, pc2020Class2, pc2020Other;
 
 		// Load point cloud for 2017 - Class 2
-		Potree.loadPointCloud("./Bobcat_Fires_Converted/SBNFprefire2017_253_1881_class2_converted/metadata.json", "2017 - Class 2", function(e){
+		Potree.loadPointCloud("Bobcat_Fires_Converted/SBNFprefire2017_253_1881_class2_converted/metadata.json", "2017 - Class 2", function(e){
 			pc2017Class2 = e.pointcloud;
 			viewer.scene.addPointCloud(pc2017Class2);
 			pc2017Class2.position.z = 0;
@@ -251,7 +251,7 @@
 		});
 
 		// Load point cloud for 2017 - All Other Classes
-		Potree.loadPointCloud("./Bobcat_Fires_Converted/SBNFprefire2017_253_1881_other_class_converted/metadata.json", "2017 - All Other Classes", function(e){
+		Potree.loadPointCloud("Bobcat_Fires_Converted/SBNFprefire2017_253_1881_other_class_converted/metadata.json", "2017 - All Other Classes", function(e){
 			pc2017Other = e.pointcloud;
 			viewer.scene.addPointCloud(pc2017Other);
 			pc2017Other.position.z = 0;
@@ -265,7 +265,7 @@
 		});
 			
 		// Load point cloud for 2020 - Class 2
-		Potree.loadPointCloud("./Bobcat_Fires_Converted/sbnf2020_253_1881_class2_converted/metadata.json", "2020 - Class 2", function(e){
+		Potree.loadPointCloud("Bobcat_Fires_Converted/sbnf2020_253_1881_class2_converted/metadata.json", "2020 - Class 2", function(e){
 			pc2020Class2 = e.pointcloud;
 			viewer.scene.addPointCloud(pc2020Class2);
 			pc2020Class2.position.z = 0;
@@ -279,7 +279,7 @@
 		});
 
 		// Load point cloud for 2020 - All Other Classes
-		Potree.loadPointCloud("./Bobcat_Fires_Converted/sbnf2020_253_1881_other_class_converted/metadata.json", "2020 - All Other Classes", function(e){
+		Potree.loadPointCloud("Bobcat_Fires_Converted/sbnf2020_253_1881_other_class_converted/metadata.json", "2020 - All Other Classes", function(e){
 			pc2020Other = e.pointcloud;
 			viewer.scene.addPointCloud(pc2020Other);
 			pc2020Other.position.z = 0;
@@ -323,7 +323,7 @@
 		 	let message = `
 		 	Use the buttons on the top right to toggle each point cloud layer on or off.<br>
 			<p>
-			Click a buttoooon to turn its corresponding layer on (the button will darken) or off (the button will lighten).
+			Click a button to turn its corresponding layer on (the button will darken) or off (the button will lighten).
     </a>
 </p>
 		 	`;
