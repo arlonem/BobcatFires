@@ -279,7 +279,7 @@
 		});
 
 		// Load point cloud for 2020 - All Other Classes
-		Potree.loadPointCloud("Bobcat_Fires_Converted/sbnf2020_253_1881_other_class_converted/metadata.json", "2020 - All Other Classes", function(e){
+		Potree.loadPointCloud("https://potree-data-arlo.s3.us-east-2.amazonaws.com/sbnf2020_253_1881_class2_converted/metadata.json", "2020 - All Other Classes", function(e){
 			pc2020Other = e.pointcloud;
 			viewer.scene.addPointCloud(pc2020Other);
 			pc2020Other.position.z = 0;
