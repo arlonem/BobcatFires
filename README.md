@@ -1,4 +1,4 @@
-This repository contains a web-based Potree viewer application built with HTML, CSS, and JavaScript. It includes all necessary libraries, custom source code for handling point clouds, and a structured folder of datasets and assets, with some large files hosted externally vioa AWS S3.
+This repository contains a web-based Potree viewer application built with HTML, CSS, and JavaScript. It includes all necessary libraries, source code for handling point clouds, and datasets/assets, with some large files hosted externally via AWS S3.
 
 **Classes**  
   Contains origional point cloud data fom the Bobcat Fire.
